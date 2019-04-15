@@ -1,0 +1,22 @@
+body {
+  font-family: sans-serif;
+  background-color: rgb(240, 222, 186);
+}
+
+#svgCanvas {
+  background-color: rgb(255, 255, 255);
+  touch-action: none;
+}
+
+#controllPanel {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.controllButton {
+  background-color: rgb(112, 172, 152);
+  border-radius: 0.5vw;
+  margin: 0.5vw;
+}

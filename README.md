@@ -1,2 +1,0 @@
-# HyperIllustSystem
-Created with CodeSandbox
