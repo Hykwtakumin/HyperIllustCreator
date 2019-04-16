@@ -6,13 +6,30 @@
   </head>
 
   <body>
-    <svg id="svgCanvas" width="800" height="600"></svg>
-    <h1>Hyper Illust System</h1>
+    <svg id="svgCanvas"></svg>
+    <h1>Hyper Illust Creator</h1>
     <div id="controllPanel">
+      <input id="color" type="color" value="#585858" class="controllButton" />
       <button id="undo" class="controllButton">Undo</button>
       <button id="redo" class="controllButton">Redo</button>
       <button id="clear" class="controllButton">Clear</button>
+      <button id="addLink" class="controllButton">addLinkToPath</button>
+      <button id="import" class="controllButton">import</button>
+      <button id="upload" class="controllButton">upload</button>
+      <button id="download" class="controllButton">download</button>
     </div>
+    <dialog id="dialog">
+      <p>
+        <label
+          >次のURLを追加します:
+          <input type="text" id="pathLink" />
+        </label>
+      </p>
+      <menu>
+        <button id="modalCancel">Cancel</button>
+        <button id="modalConfirm">Confirm</button>
+      </menu>
+    </dialog>
     <script src="src/index.ts"></script>
   </body>
 </html>

@@ -1,6 +1,7 @@
 body {
   font-family: sans-serif;
-  background-color: rgb(240, 222, 186);
+  color: rgb(129, 193, 236);
+  background-color: rgb(80, 80, 80);
 }
 
 #svgCanvas {
@@ -16,7 +17,18 @@ body {
 }
 
 .controllButton {
-  background-color: rgb(112, 172, 152);
-  border-radius: 0.5vw;
+  font-size: 1.5em;
+  color: rgb(255, 255, 255);
+  background-color: rgb(4, 101, 165);
+  border-radius: 0.5vh;
+  border-width: 0;
   margin: 0.5vw;
+}
+
+.controllButton:hover {
+  background-color: rgb(129, 193, 236);
+}
+
+.selectedPath {
+  color: aqua;
 }
