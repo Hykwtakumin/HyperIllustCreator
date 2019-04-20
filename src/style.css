@@ -29,6 +29,8 @@ body {
   background-color: rgb(129, 193, 236);
 }
 
-.selectedPath {
-  color: aqua;
+.select-overlay {
+  stroke: aqua;
+  transition-duration: 200ms;
+  cursor: crosshair;
 }

@@ -1,8 +1,8 @@
 import "./style.css";
 
 const svgCanvas = document.getElementById("svgCanvas");
-svgCanvas.setAttribute("width", (window.innerWidth * 0.8).toString());
-svgCanvas.setAttribute("height", (window.innerHeight * 0.6).toString());
+svgCanvas.setAttribute("width", window.innerWidth.toString());
+svgCanvas.setAttribute("height", (window.innerHeight * 0.8).toString());
 svgCanvas.setAttribute("xmlns", "http://www.w3.org/2000/svg");
 svgCanvas.setAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
 
@@ -11,6 +11,7 @@ const undoButton = document.getElementById("undo");
 const redoButton = document.getElementById("redo");
 const clearButton = document.getElementById("clear");
 const addLinkButton = document.getElementById("addLink");
+const importButton = document.getElementById("import");
 const dlButton = document.getElementById("download");
 
 const dialog = document.getElementById("dialog") as HTMLDialogElement;
@@ -26,6 +27,7 @@ undoButton.addEventListener("click", handleUndo);
 redoButton.addEventListener("click", handleRedo);
 clearButton.addEventListener("click", handleClear);
 addLinkButton.addEventListener("click", handleAddLink);
+importButton.addEventListener("click", handelImpotButton);
 dlButton.addEventListener("click", handelDlButton);
 document.addEventListener("keypress", handleKeyPress);
 
@@ -42,6 +44,7 @@ let drawType: string = "";
 let lastPath: SVGElement;
 let oldPath: SVGElement;
 let selectedPath: SVGElement;
+let prevElm: SVGElement;
 
 let linetoX = [], //描画点の横座標の初期化
   linetoY = [], //描画点の縦座標の初期化
@@ -70,6 +73,7 @@ function handlePointerDown(event: PointerEvent) {
       (cntMoveto = 0); //描画点のカウンターを初期化
     linetoStr = "M " + movetoX + " " + movetoY + " "; //d要素でpathの開始点を設定
   } else {
+    /*パスを選択してリンクを追加*/
     console.dir(event.srcElement);
     selectedPath = event.srcElement as SVGElement;
     //selectedPath.classList.add("selectedPath");
@@ -103,7 +107,7 @@ function handleModalConfirm() {
 
 function handlePointerMove(event: PointerEvent) {
   event.preventDefault();
-  if (isDragging && lastPath) {
+  if (lastPath && isDragging) {
     linetoX[cntMoveto] = event.pageX - svgCanvas.clientLeft; //SVG上のマウス座標(横方向)の取得
     linetoY[cntMoveto] = event.pageY - svgCanvas.clientTop; //SVG上のマウス座標(縦方向)の取得
     linetoStr =
@@ -111,6 +115,20 @@ function handlePointerMove(event: PointerEvent) {
 
     lastPath.setAttribute("d", linetoStr);
     cntMoveto++;
+  } else if (lastPath) {
+    const srcElm = event.srcElement as SVGElement;
+    if (srcElm.id !== "svgCanvas") {
+      if (prevElm) {
+        prevElm.classList.remove("select-overlay");
+      }
+      srcElm.classList.add("select-overlay");
+      prevElm = srcElm;
+    } else {
+      if (prevElm) {
+        prevElm.classList.remove("select-overlay");
+        prevElm = null;
+      }
+    }
   }
 }
 
@@ -145,6 +163,8 @@ function handleAddLink() {
   isDragging = false;
   isSelecting = true;
 }
+
+function handelImpotButton() {}
 
 function handelDlButton() {
   const fileName = "hyperillust.svg";
