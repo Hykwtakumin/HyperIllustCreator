@@ -4,7 +4,7 @@ body {
   background-color: rgb(80, 80, 80);
 }
 
-#svgCanvas {
+#svgRoot {
   background-color: rgb(255, 255, 255);
   touch-action: none;
 }

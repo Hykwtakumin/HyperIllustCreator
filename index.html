@@ -6,7 +6,11 @@
   </head>
 
   <body>
-    <svg id="svgCanvas"></svg>
+    <svg
+      id="svgRoot"
+      xmlns="http://www.w3.org/2000/svg"
+      xmlns:xlink="http://www.w3.org/1999/xlink"
+    ></svg>
     <h1>Hyper Illust Creator</h1>
     <div id="controllPanel">
       <input id="color" type="color" value="#585858" class="controllButton" />
@@ -30,6 +34,7 @@
         <button id="modalConfirm">Confirm</button>
       </menu>
     </dialog>
+
     <script src="src/index.ts"></script>
   </body>
 </html>
