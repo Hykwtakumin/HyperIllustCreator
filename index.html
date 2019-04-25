@@ -6,12 +6,25 @@
   </head>
 
   <body>
+    <h1>Hyper Illust Creator</h1>
+    <div class="editorMenuContainer">
+      <select id="editorMenu" class="editorMenu">
+        <option value="draw" selected>お絵かき</option>
+        <option value="elase">消しゴム</option>
+        <option value="edit">編集</option>
+      </select>
+
+      <select id="widthMenu" class="editorMenu">
+        <option value="3">細</option>
+        <option value="6" selected>中</option>
+        <option value="12">太</option>
+      </select>
+    </div>
     <svg
       id="svgRoot"
       xmlns="http://www.w3.org/2000/svg"
       xmlns:xlink="http://www.w3.org/1999/xlink"
     ></svg>
-    <h1>Hyper Illust Creator</h1>
     <div id="controllPanel">
       <input id="color" type="color" value="#585858" class="controllButton" />
       <button id="undo" class="controllButton">Undo</button>

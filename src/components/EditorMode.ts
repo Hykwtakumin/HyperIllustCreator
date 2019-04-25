@@ -1,4 +1,5 @@
 export enum EditorMode {
   edit,
-  draw
+  draw,
+  elase
 }

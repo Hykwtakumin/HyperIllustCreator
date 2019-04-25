@@ -1,5 +1,6 @@
 import "./style.css";
 import { SVGCanvas } from "./components/SVGCanvas";
+import { EditorMode } from "./components/EditorMode";
 
 const colorPicker = document.getElementById("color");
 const undoButton = document.getElementById("undo");
@@ -9,9 +10,15 @@ const addLinkButton = document.getElementById("addLink");
 const importButton = document.getElementById("import");
 const dlButton = document.getElementById("download");
 
+const modeMenu = document.getElementById("editorMenu") as HTMLSelectElement;
+const widthMenu = document.getElementById("widthMenu") as HTMLSelectElement;
+
 const dialog = document.getElementById("dialog") as HTMLDialogElement;
 const modalCancel = document.getElementById("modalCancel");
 const modalConfirm = document.getElementById("modalConfirm");
+
+modeMenu.addEventListener("change", handleModeChange);
+widthMenu.addEventListener("change", handleWidthChange);
 
 colorPicker.addEventListener("change", handleColorChange);
 undoButton.addEventListener("click", handleUndo);
@@ -25,12 +32,6 @@ document.addEventListener("keypress", handleKeyPress);
 modalCancel.addEventListener("click", handleModalCancel);
 modalConfirm.addEventListener("click", handleModalConfirm);
 
-let isDragging: boolean = false;
-let isSelecting: boolean = false;
-
-let strokeColor: string = "#585858";
-let drawType: string = "";
-let lastPath: SVGElement;
 let oldPath: SVGElement;
 let selectedPath: SVGElement;
 let prevElm: SVGElement;
@@ -44,9 +45,30 @@ window.onresize = () => {
   svgCanvas.resizeCanvasSize(window.innerWidth, window.innerHeight * 0.7);
 };
 
+function handleWidthChange(event) {
+  svgCanvas.penWidth = event.target.value;
+}
+
+function handleModeChange(event) {
+  svgCanvas.editorMode = event.target.value as EditorMode;
+  console.log(`mode: ${svgCanvas.editorMode}`);
+  switch (event.target.value) {
+    case `edit`:
+      svgCanvas.editorMode = 0;
+      break;
+    case `draw`:
+      svgCanvas.editorMode = 1;
+      break;
+    case `elase`:
+      svgCanvas.editorMode = 2;
+      break;
+    default:
+      svgCanvas.editorMode = 1;
+  }
+}
+
 function handleModalCancel() {
   dialog.close();
-  isSelecting = false;
 }
 
 function handleModalConfirm() {
@@ -57,17 +79,38 @@ function handleModalConfirm() {
     "http://www.w3.org/2000/svg",
     "a"
   );
+
+  const groupingElm: SVGGElement = document.createElementNS(
+    "http://www.w3.org/2000/svg",
+    "g"
+  );
+
+  /* 選択されているパス郡をグループ化する */
+  svgCanvas.canvas.appendChild(groupingElm);
+  svgCanvas.groupingList.forEach(path => {
+    const copyPath = svgCanvas.canvas.removeChild(path);
+    groupingElm.appendChild(path);
+  });
+
+  console.dir(groupingElm);
+
+  /* グループをaタグ内に格納する */
   linkElm.setAttribute("xlink:href", appendLink);
   linkElm.setAttribute("target", "_blank");
-  selectedPath.appendChild(linkElm);
-  selectedPath.parentNode.insertBefore(linkElm, selectedPath);
-  const copyPath = svgCanvas.removeChild(selectedPath);
-  linkElm.appendChild(copyPath);
+  groupingElm.appendChild(linkElm);
+  groupingElm.parentNode.insertBefore(linkElm, groupingElm);
+  const copyGroup = svgCanvas.canvas.removeChild(groupingElm);
+  linkElm.appendChild(copyGroup);
+
+  /* inRectを削除 */
+  if (svgCanvas.lastRect) {
+    svgCanvas.canvas.removeChild(svgCanvas.lastRect);
+  }
   dialog.close();
 }
 
 function handleColorChange(event) {
-  strokeColor = event.target.value;
+  svgCanvas.changeColor(event.target.value);
 }
 
 function handleUndo() {
@@ -84,14 +127,12 @@ function handleRedo() {
 }
 
 function handleClear() {
-  while (svgCanvas.firstChild) {
-    svgCanvas.removeChild(svgCanvas.firstChild);
-  }
+  svgCanvas.clearCanvas();
 }
 
 function handleAddLink() {
-  isDragging = false;
-  isSelecting = true;
+  svgCanvas.isDragging = false;
+  dialog.showModal();
 }
 
 function handelImpotButton() {}
@@ -100,7 +141,7 @@ function handelDlButton() {
   const fileName = "hyperillust.svg";
 
   const blobObject: Blob = new Blob(
-    [new XMLSerializer().serializeToString(svgCanvas)],
+    [new XMLSerializer().serializeToString(svgCanvas.canvas)],
     { type: "image/svg+xml;charset=utf-8" }
   );
   const dlUrl = window.URL.createObjectURL(blobObject);
