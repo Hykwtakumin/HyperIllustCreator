@@ -114,9 +114,7 @@ function handleColorChange(event) {
 }
 
 function handleUndo() {
-  if (svgCanvas.lastChild) {
-    oldPath = svgCanvas.removeChild(svgCanvas.lastChild) as SVGElement;
-  }
+  svgCanvas.redoCanvas();
 }
 
 function handleRedo() {

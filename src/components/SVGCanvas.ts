@@ -7,7 +7,7 @@ export class SVGCanvas {
   lastPath: SVGPathElement;
   lastRect: SVGRectElement;
   prevEvent: PointerEvent;
-  groupingList: SVGPathElement[];
+  groupingList: SVGElement[];
   isDragging: boolean;
   isAllowTouch: boolean;
   editorMode: EditorMode;
@@ -48,9 +48,9 @@ export class SVGCanvas {
     } else if (this.editorMode === EditorMode.edit) {
       /* 編集モード */
 
-      if (this.lastRect) {
-        this.canvas.removeChild(this.lastRect);
-      }
+      // if (this.lastRect) {
+      //   this.canvas.removeChild(this.lastRect);
+      // }
 
       if (this.groupingList.length > 0) {
         this.groupingList.length = 0;
@@ -105,7 +105,7 @@ export class SVGCanvas {
       const list = Array.from(rectCanvas.getIntersectionList(inRect, null));
       const rected = list.pop();
 
-      list.forEach((item: SVGPathElement) => {
+      list.forEach((item: SVGElement) => {
         this.groupingList.push(item);
       });
 
@@ -116,6 +116,12 @@ export class SVGCanvas {
   clearCanvas = () => {
     while (this.canvas.firstChild) {
       this.canvas.removeChild(this.canvas.firstChild);
+    }
+  };
+
+  redoCanvas = () => {
+    if (this.lastPath) {
+      this.canvas.removeChild(this.lastPath);
     }
   };
 
