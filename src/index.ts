@@ -1,6 +1,6 @@
 import "./style.css";
 import { SVGCanvas } from "./components/SVGCanvas";
-import { EditorMode } from "./components/EditorMode";
+import { EditorMode, DrawMode } from "./components/EditorMode";
 
 const colorPicker = document.getElementById("color");
 const undoButton = document.getElementById("undo");
@@ -12,6 +12,7 @@ const dlButton = document.getElementById("download");
 
 const modeMenu = document.getElementById("editorMenu") as HTMLSelectElement;
 const widthMenu = document.getElementById("widthMenu") as HTMLSelectElement;
+const drawModeMenu = document.getElementById("drawMode") as HTMLSelectElement;
 
 const dialog = document.getElementById("dialog") as HTMLDialogElement;
 const modalCancel = document.getElementById("modalCancel");
@@ -19,6 +20,7 @@ const modalConfirm = document.getElementById("modalConfirm");
 
 modeMenu.addEventListener("change", handleModeChange);
 widthMenu.addEventListener("change", handleWidthChange);
+drawModeMenu.addEventListener("change", handelDrawModeChange);
 
 colorPicker.addEventListener("change", handleColorChange);
 undoButton.addEventListener("click", handleUndo);
@@ -64,6 +66,22 @@ function handleModeChange(event) {
       break;
     default:
       svgCanvas.editorMode = 1;
+  }
+}
+
+function handelDrawModeChange(event) {
+  /*デフォルトは線による描画*/
+  svgCanvas.drawMode = event.target.value as DrawMode;
+  console.log(`mode: ${svgCanvas.drawMode}`);
+  switch (event.target.value) {
+    case `path`:
+      svgCanvas.drawMode = 0;
+      break;
+    case `point`:
+      svgCanvas.drawMode = 1;
+      break;
+    default:
+      svgCanvas.drawMode = 0;
   }
 }
 

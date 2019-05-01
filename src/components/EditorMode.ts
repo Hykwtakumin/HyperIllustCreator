@@ -3,3 +3,8 @@ export enum EditorMode {
   draw,
   elase
 }
+
+export enum DrawMode {
+  path,
+  point
+}

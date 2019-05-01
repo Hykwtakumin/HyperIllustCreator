@@ -21,6 +21,7 @@ export const addPath = (canvas: SVGElement, point: Points): SVGPathElement => {
   const initialPoint = `M ${point.x} ${point.y} `;
   pathElm.setAttribute("d", initialPoint);
   pathElm.setAttribute("fill", "none");
+  pathElm.setAttribute("pointer-events", "none");
   canvas.appendChild(pathElm);
   return pathElm;
 };

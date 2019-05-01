@@ -1,16 +1,19 @@
-import { EditorMode } from "./EditorMode";
+import { EditorMode, DrawMode } from "./EditorMode";
 import { getPoint, addPath, drawPath } from "./PathDrawer";
+import { addPoint } from "./PointDrawer";
 import { addRect, drawRect } from "./RectDrawer";
 
 export class SVGCanvas {
   canvas: SVGElement;
   lastPath: SVGPathElement;
   lastRect: SVGRectElement;
+  lastCircle: SVGCircleElement;
   prevEvent: PointerEvent;
   groupingList: SVGElement[];
   isDragging: boolean;
   isAllowTouch: boolean;
   editorMode: EditorMode;
+  drawMode: DrawMode;
   color: string;
   penWidth: number;
   constructor(canvas: SVGElement) {
@@ -23,6 +26,7 @@ export class SVGCanvas {
     this.editorMode = EditorMode.draw;
     this.isAllowTouch = false;
     this.penWidth = 6;
+    this.drawMode = DrawMode.path;
     this.color = "#585858";
     /* other setting */
     this.groupingList = [];
@@ -39,10 +43,20 @@ export class SVGCanvas {
     if (this.editorMode === EditorMode.draw) {
       this.isDragging = true;
 
-      const path = addPath(this.canvas, getPoint(event));
-      path.setAttribute("stroke", this.color);
-      path.setAttribute("stroke-width", this.penWidth.toString());
-      this.lastPath = path;
+      if (this.drawMode === DrawMode.path) {
+        const path = addPath(this.canvas, getPoint(event));
+        path.setAttribute("stroke", this.color);
+        path.setAttribute("stroke-width", this.penWidth.toString());
+        path.classList.add("current-path");
+        this.lastPath = path;
+      } else if (this.drawMode === DrawMode.point) {
+        const pointElm = addPoint(
+          this.canvas,
+          event,
+          this.color,
+          this.penWidth
+        );
+      }
     } else if (this.editorMode === EditorMode.elase) {
       /* 消しゴムモード */
     } else if (this.editorMode === EditorMode.edit) {
@@ -55,6 +69,11 @@ export class SVGCanvas {
       if (this.groupingList.length > 0) {
         this.groupingList.length = 0;
       }
+
+      if (this.lastRect) {
+        this.lastRect.remove();
+      }
+
       this.isDragging = true;
       const rect = addRect(this.canvas, getPoint(event));
       this.lastRect = rect;
@@ -64,14 +83,23 @@ export class SVGCanvas {
   handleMove = (event: PointerEvent) => {
     if (this.isDragging) {
       event.preventDefault();
-      if (this.editorMode === EditorMode.draw && this.lastPath) {
-        if (!this.isAllowTouch) {
-          if (event.pointerType !== "touch") {
-            //pen or mouse only
+      if (this.editorMode === EditorMode.draw) {
+        if (this.drawMode === DrawMode.path && this.lastPath) {
+          if (!this.isAllowTouch) {
+            if (event.pointerType !== "touch") {
+              //pen or mouse only
+              drawPath(this.lastPath, getPoint(event));
+            }
+          } else {
             drawPath(this.lastPath, getPoint(event));
           }
-        } else {
-          drawPath(this.lastPath, getPoint(event));
+        } else if (this.drawMode === DrawMode.point) {
+          const pointElm = addPoint(
+            this.canvas,
+            event,
+            this.color,
+            this.penWidth
+          );
         }
       } else if (this.editorMode === EditorMode.elase) {
         /* 消しゴムモード */
@@ -85,6 +113,12 @@ export class SVGCanvas {
   handleUp = (event: PointerEvent) => {
     event.preventDefault();
     this.isDragging = false;
+
+    if (this.lastPath) {
+      this.lastPath.classList.remove("current-path");
+      this.lastPath = null;
+    }
+
     if (this.editorMode === EditorMode.edit && this.lastRect) {
       /* 編集モード */
       const pathAllay = Array.from(document.querySelectorAll("path"));
@@ -120,8 +154,11 @@ export class SVGCanvas {
   };
 
   redoCanvas = () => {
-    if (this.lastPath) {
-      this.canvas.removeChild(this.lastPath);
+    // if (this.lastPath) {
+    //   this.canvas.removeChild(this.lastPath);
+    // }
+    if (this.canvas.lastChild) {
+      this.canvas.removeChild(this.canvas.lastChild);
     }
   };
 
