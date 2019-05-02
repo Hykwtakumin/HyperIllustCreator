@@ -1,5 +1,11 @@
 import { EditorMode, DrawMode } from "./EditorMode";
-import { getPoint, addPath, drawPath } from "./PathDrawer";
+import {
+  getPoint,
+  addPath,
+  drawPath,
+  setPointerEventsEnableToAllPath,
+  setPointerEventsDisableToAllPath
+} from "./PathDrawer";
 import { addPoint } from "./PointDrawer";
 import { addRect, drawRect } from "./RectDrawer";
 
@@ -36,6 +42,7 @@ export class SVGCanvas {
   resizeCanvasSize = (width: number, height: number) => {
     this.canvas.style.width = width.toString();
     this.canvas.style.height = height.toString();
+    this.canvas.setAttribute("viewBox", `0,0,${width},${height}`);
   };
 
   handleDown = (event: PointerEvent) => {

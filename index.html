@@ -1,60 +1,57 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Parcel Sandbox</title>
-    <meta charset="UTF-8" />
-  </head>
 
-  <body>
-    <h1>Hyper Illust Creator</h1>
+<head>
+	<title>Parcel Sandbox</title>
+	<meta charset="UTF-8" />
+</head>
 
-    <div id="controllPanel">
-      <select id="editorMenu" class="editorMenu">
-        <option value="draw" selected>お絵かき</option>
-        <option value="elase">消しゴム</option>
-        <option value="edit">編集</option>
-      </select>
+<body>
+	<h1>Hyper Illust Creator</h1>
 
-      <select id="widthMenu" class="editorMenu">
-        <option value="3">細</option>
-        <option value="6" selected>中</option>
-        <option value="12">太</option>
-      </select>
+	<div id="controllPanel">
+		<select id="editorMenu" class="editorMenu">
+			<option value="draw" selected>お絵かき</option>
+			<option value="elase">消しゴム</option>
+			<option value="edit">編集</option>
+		</select>
 
-      <select id="drawMode" class="editorMenu">
-        <option value="path" selected>線画</option>
-        <option value="point">点描</option>
-      </select>
+		<select id="widthMenu" class="editorMenu">
+			<option value="3">細</option>
+			<option value="6" selected>中</option>
+			<option value="12">太</option>
+		</select>
 
-      <input id="color" type="color" value="#585858" class="controllButton" />
-      <button id="undo" class="controllButton">Undo</button>
-      <button id="redo" class="controllButton">Redo</button>
-      <button id="clear" class="controllButton">Clear</button>
-      <button id="addLink" class="controllButton">addLinkToPath</button>
-      <button id="import" class="controllButton">import</button>
-      <button id="upload" class="controllButton">upload</button>
-      <button id="download" class="controllButton">download</button>
-    </div>
+		<select id="drawMode" class="editorMenu">
+			<option value="path" selected>線画</option>
+			<option value="point">点描</option>
+		</select>
 
-    <svg
-      id="svgRoot"
-      xmlns="http://www.w3.org/2000/svg"
-      xmlns:xlink="http://www.w3.org/1999/xlink"
-    ></svg>
+		<input id="color" type="color" value="#585858" class="controllButton" />
+		<button id="undo" class="controllButton">Undo</button>
+		<button id="redo" class="controllButton">Redo</button>
+		<button id="clear" class="controllButton">Clear</button>
+		<button id="addLink" class="controllButton">addLinkToPath</button>
+		<button id="import" class="controllButton">import</button>
+		<button id="upload" class="controllButton">upload</button>
+		<button id="download" class="controllButton">download</button>
+	</div>
 
-    <dialog id="dialog">
-      <p>
-        <label
-          >次のURLを追加します:
-          <input type="text" id="pathLink" />
-        </label>
-      </p>
-      <menu>
-        <button id="modalCancel">Cancel</button>
-        <button id="modalConfirm">Confirm</button>
-      </menu>
-    </dialog>
+	<svg id="svgRoot" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"></svg>
 
-    <script src="src/index.ts"></script>
-  </body>
+	<dialog id="dialog">
+		<p>
+			<label>次のURLを追加します:
+				<input type="text" id="pathLink" />
+			</label>
+		</p>
+		<menu>
+			<button id="modalCancel">Cancel</button>
+			<button id="modalConfirm">Confirm</button>
+		</menu>
+	</dialog>
+
+	<script src="src/index.ts"></script>
+</body>
+
 </html>

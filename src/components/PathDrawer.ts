@@ -32,3 +32,19 @@ export const drawPath = (path: SVGPathElement, point: Points) => {
   pointsArray += movement;
   path.setAttribute("d", pointsArray);
 };
+
+export const setPointerEventsEnableToAllPath = (canvas: SVGElement) => {
+  const allPathList = Array.from(canvas.querySelectorAll("path"));
+  console.dir(allPathList);
+  allPathList.forEach(path => {
+    path.setAttribute("pointer-events", "auto");
+  });
+};
+
+export const setPointerEventsDisableToAllPath = (canvas: SVGElement) => {
+  const allPathList = Array.from(canvas.querySelectorAll("path"));
+  console.dir(allPathList);
+  allPathList.forEach(path => {
+    path.setAttribute("pointer-events", "none");
+  });
+};

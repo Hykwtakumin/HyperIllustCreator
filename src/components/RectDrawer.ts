@@ -16,12 +16,13 @@ export const addRect = (canvas: SVGElement, point: Points): SVGRectElement => {
   return rectElm;
 };
 
+/*TOOD あらゆる方向に矩形選択できるようにする*/
 export const drawRect = (rect: SVGRectElement, point: Points) => {
   const prevX = parseFloat(rect.getAttribute("x"));
   const prevY = parseFloat(rect.getAttribute("y"));
 
-  const dx = point.x - prevX;
-  const dy = point.y - prevY;
+  const dx = Math.abs(point.x - prevX);
+  const dy = Math.abs(point.y - prevY);
   rect.setAttribute("width", dx.toString());
   rect.setAttribute("height", dy.toString());
 };

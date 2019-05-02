@@ -2,6 +2,8 @@ body {
   font-family: sans-serif;
   color: rgb(129, 193, 236);
   background-color: rgb(80, 80, 80);
+  transform-style: preserve-3d;
+  perspective: 100px;
 }
 .editorMenuContainer {
   display: flex;
@@ -38,11 +40,16 @@ body {
 }
 
 .select-overlay {
-  stroke: aqua;
+  cursor: pointer;
+}
+
+.select-overlay:hover {
+  transform: translateZ(10px);
+  color: blue;
   transition-duration: 200ms;
-  cursor: crosshair;
+  cursor: pointer;
 }
 
 .current-path {
-  stroke: red;
+  stroke: salmon;
 }

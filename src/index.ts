@@ -2,6 +2,14 @@ import "./style.css";
 import { SVGCanvas } from "./components/SVGCanvas";
 import { EditorMode, DrawMode } from "./components/EditorMode";
 
+import {
+  getPoint,
+  addPath,
+  drawPath,
+  setPointerEventsEnableToAllPath,
+  setPointerEventsDisableToAllPath
+} from "./components/PathDrawer";
+
 const colorPicker = document.getElementById("color");
 const undoButton = document.getElementById("undo");
 const redoButton = document.getElementById("redo");
@@ -57,11 +65,17 @@ function handleModeChange(event) {
   switch (event.target.value) {
     case `edit`:
       svgCanvas.editorMode = 0;
+      /*お絵かき時にはPathに対するPointerEventを無効化する*/
+      setPointerEventsEnableToAllPath(svgCanvas.canvas);
       break;
     case `draw`:
+      /*編集時はPathに対するPointerEventを有効化*/
       svgCanvas.editorMode = 1;
+      setPointerEventsDisableToAllPath(svgCanvas.canvas);
       break;
     case `elase`:
+      /*お絵かき時にはPathに対するPointerEventを無効化する*/
+      setPointerEventsEnableToAllPath(svgCanvas.canvas);
       svgCanvas.editorMode = 2;
       break;
     default:
@@ -108,6 +122,7 @@ function handleModalConfirm() {
   svgCanvas.groupingList.forEach(path => {
     const copyPath = svgCanvas.canvas.removeChild(path);
     groupingElm.appendChild(path);
+    groupingElm.classList.add("select-overlay");
   });
 
   console.dir(groupingElm);
