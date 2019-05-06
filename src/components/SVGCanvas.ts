@@ -1,13 +1,27 @@
 import { EditorMode, DrawMode } from "./EditorMode";
 import {
+  Points,
   getPoint,
   addPath,
   drawPath,
   setPointerEventsEnableToAllPath,
   setPointerEventsDisableToAllPath
 } from "./PathDrawer";
-import { addPoint } from "./PointDrawer";
+import {
+  addPoint,
+  addPointWithpCircle,
+  addPolyLine,
+  addDot
+} from "./PointDrawer";
 import { addRect, drawRect } from "./RectDrawer";
+
+export type pCircle = {
+  point: {
+    x: number;
+    y: number;
+  };
+  r: number;
+};
 
 export class SVGCanvas {
   canvas: SVGElement;
@@ -22,6 +36,8 @@ export class SVGCanvas {
   drawMode: DrawMode;
   color: string;
   penWidth: number;
+  pCircleList: pCircle[];
+
   constructor(canvas: SVGElement) {
     /* canva setting */
     this.canvas = canvas;
@@ -36,6 +52,8 @@ export class SVGCanvas {
     this.color = "#585858";
     /* other setting */
     this.groupingList = [];
+    this.pCircleList = [];
+    this.lastCircle = null;
   }
 
   /*for canvas resize*/
@@ -63,6 +81,16 @@ export class SVGCanvas {
           this.color,
           this.penWidth
         );
+
+        this.lastCircle = pointElm;
+
+        // const point = addPointWithpCircle(
+        //   this.canvas,
+        //   event,
+        //   this.color,
+        //   this.penWidth
+        // );
+        // this.pCircleList.push(point);
       }
     } else if (this.editorMode === EditorMode.elase) {
       /* 消しゴムモード */
@@ -107,6 +135,74 @@ export class SVGCanvas {
             this.color,
             this.penWidth
           );
+
+          if (this.lastCircle) {
+            /*共通外接線を求めて表示する*/
+            /* Common circumstances */
+            const prevCircle = this.lastCircle;
+            const prevR = parseFloat(prevCircle.getAttribute("r"));
+            const prevCx = parseFloat(prevCircle.getAttribute("cx"));
+            const prevCy = parseFloat(prevCircle.getAttribute("cy"));
+            //console.log(`prevR : ${prevR}`);
+
+            const nowR = parseFloat(pointElm.getAttribute("r"));
+            const nowCx = parseFloat(pointElm.getAttribute("cx"));
+            const nowCy = parseFloat(pointElm.getAttribute("cy"));
+
+            //console.log(`nowR : ${nowR}`);
+            //console.log(`nowCx : ${nowCx}`);
+            //console.log(`nowCy : ${nowCy}`);
+
+            const diffR = prevR - nowR;
+            const powNowXY = nowCx ** 2 + nowCy ** 2;
+
+            const ccx1 =
+              prevR *
+              ((nowCx * diffR + nowCy * Math.sqrt(powNowXY - diffR ** 2)) /
+                powNowXY);
+
+            const ccx2 =
+              prevR *
+              ((nowCx * diffR - nowCy * Math.sqrt(powNowXY - diffR ** 2)) /
+                powNowXY);
+
+            const ccy1 =
+              prevR *
+              ((nowCy * diffR - nowCx * Math.sqrt(powNowXY - diffR ** 2)) /
+                powNowXY);
+            const ccy2 =
+              prevR *
+              ((nowCy * diffR + nowCx * Math.sqrt(powNowXY - diffR ** 2)) /
+                powNowXY);
+
+            console.log(`ccx1 : ${ccx1}`);
+            console.log(`ccy1 : ${ccy1}`);
+
+            const point1: Points = {
+              x: ccx1,
+              y: ccy1
+            };
+
+            const point2: Points = {
+              x: ccx2,
+              y: ccy2
+            };
+
+            addDot(this.canvas, point1);
+            addDot(this.canvas, point2);
+
+            this.lastCircle = pointElm;
+          } else {
+            this.lastCircle = pointElm;
+          }
+
+          // const point = addPointWithpCircle(
+          //   this.canvas,
+          //   event,
+          //   this.color,
+          //   this.penWidth
+          // );
+          // this.pCircleList.push(point);
         }
       } else if (this.editorMode === EditorMode.elase) {
         /* 消しゴムモード */
@@ -151,6 +247,14 @@ export class SVGCanvas {
       });
 
       console.dir(this.groupingList);
+    } else if (
+      this.editorMode === EditorMode.draw &&
+      this.drawMode === DrawMode.point
+    ) {
+      this.lastCircle = null;
+      //const polyLine = addPolyLine(this.canvas, this.color, this.pCircleList);
+      //console.dir(polyLine);
+      //this.pCircleList.length = 0;
     }
   };
   /* clear canvas */
